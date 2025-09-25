@@ -25,7 +25,7 @@ export class UpdateUserDto {
   @MinLength(6)
   password?: string;
 
-  @ApiProperty({ required: false, enum: UserRole, example: UserRole.STUDENT })
+  @ApiProperty({ required: false, enum: UserRole, example: UserRole.MEMBER })
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;

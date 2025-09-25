@@ -51,7 +51,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Logout user by invalidating refresh token' })
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.STUDENT, UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(UserRole.MEMBER, UserRole.ADMIN, UserRole.MANAGER, UserRole.OWNER)
   @Post('logout')
   async logout(@Body() logoutDto: LogoutDto): Promise<{ data: string }> {
     await this.authService.logout(logoutDto.refreshToken);

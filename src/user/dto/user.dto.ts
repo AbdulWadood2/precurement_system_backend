@@ -57,6 +57,13 @@ export class UserDto {
   @Transform(({ value }) =>
     value === undefined || value === null ? null : value,
   )
+  @ApiProperty({ required: false })
+  profile_image_buffer?: Buffer;
+
+  @Expose()
+  @Transform(({ value }) =>
+    value === undefined || value === null ? null : value,
+  )
   createdAt: string;
 
   @Expose()

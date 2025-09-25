@@ -21,8 +21,8 @@ export function setupSwagger(app: INestApplication) {
   }
 
   const config = new DocumentBuilder()
-    .setTitle('Language Learning API')
-    .setDescription('API documentation for Language Learning application')
+    .setTitle('Precurement System API')
+    .setDescription('API documentation for Precurement System application')
     .setVersion('1.0')
     .addBearerAuth(
       {

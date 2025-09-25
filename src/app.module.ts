@@ -4,7 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { EncryptionModule } from './encryption/encryption.module';
-import { FileModule } from './file/file.module';
+import { PurchaseRequestModule } from './purchase-request/purchase-request.module';
+import { PurchaseOrderModule } from './purchase-order/purchase-order.module';
+import { ReceivingModule } from './receiving/receiving.module';
+import { InvoiceModule } from './invoice/invoice.module';
 
 @Module({
   imports: [
@@ -27,7 +30,10 @@ import { FileModule } from './file/file.module';
     UserModule,
     AuthModule,
     EncryptionModule,
-    FileModule
+    PurchaseRequestModule,
+    PurchaseOrderModule,
+    ReceivingModule,
+    InvoiceModule,
   ],
 })
 export class AppModule {}

@@ -13,7 +13,5 @@ declare namespace NodeJS {
     JWT_SECRET: string | undefined;
     JWT_AccessTokenExpiry: string | undefined;
     JWT_RefreshTokenExpiry: string | undefined;
-    // bucket
-    BASE_URL: string | undefined;
   }
 }

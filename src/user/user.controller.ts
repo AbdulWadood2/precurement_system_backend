@@ -28,8 +28,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import {} from './dto/update-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { CreateTeacherDto } from './dto/create-teacher.dto';
-import { UpdateTeacherDto } from './dto/update-teacher.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -39,7 +37,7 @@ export class UserController {
   @Get('profile')
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
   @ApiOperation({ summary: 'Get user profile' })
   async getProfile(@Request() req): Promise<{ data: UserDto }> {
     const user = await this.service.findById(req['fullUser']._id.toString());
@@ -51,7 +49,7 @@ export class UserController {
   @Put('profile')
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
   @ApiOperation({ summary: 'Update user profile' })
   async updateProfile(
     @Request() req,
@@ -69,7 +67,7 @@ export class UserController {
   @Put('change-password')
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
   @ApiOperation({ summary: 'Change user password' })
   async changePassword(
     @Request() req,
@@ -87,7 +85,7 @@ export class UserController {
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER)
   @ApiOperation({ summary: 'Get all users' })
   @ApiQuery({ name: 'role', required: false, enum: UserRole })
   async getAllUsers(
@@ -102,7 +100,7 @@ export class UserController {
   @Get('search')
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER)
   @ApiOperation({ summary: 'Search users by name or email' })
   @ApiQuery({ name: 'q', required: false, description: 'Search query' })
   @ApiQuery({ name: 'role', required: false, enum: UserRole })
@@ -118,65 +116,65 @@ export class UserController {
     };
   }
 
-  // Teacher-specific endpoints (must come before :id route)
-  @Get('teachers')
+  // Manager-specific endpoints (must come before :id route)
+  @Get('managers')
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get all teachers' })
-  async getAllTeachers(): Promise<{ data: UserDto[] }> {
-    const teachers = await this.service.findAll(UserRole.TEACHER);
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get all managers' })
+  async getAllManagers(): Promise<{ data: UserDto[] }> {
+    const managers = await this.service.findAll(UserRole.MANAGER);
     return {
-      data: teachers,
+      data: managers,
     };
   }
 
-  @Post('teachers')
+  @Post('managers')
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Create new teacher' })
-  async createTeacher(
-    @Body() dto: CreateTeacherDto,
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Create new manager' })
+  async createManager(
+    @Body() dto: CreateUserDto,
   ): Promise<{ data: UserDto }> {
-    const teacherData = { ...dto, role: UserRole.TEACHER };
-    const teacher = await this.service.createUser(teacherData);
+    const managerData = { ...dto, role: UserRole.MANAGER };
+    const manager = await this.service.createUser(managerData);
     return {
-      data: teacher,
+      data: manager,
     };
   }
 
-  @Put('teachers/:id')
+  @Put('managers/:id')
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Update teacher by ID' })
-  async updateTeacher(
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Update manager by ID' })
+  async updateManager(
     @Param('id') id: string,
-    @Body() dto: UpdateTeacherDto,
+    @Body() dto: UpdateUserDto,
   ): Promise<{ data: UserDto }> {
-    const teacher = await this.service.updateUser(id, dto);
+    const manager = await this.service.updateUser(id, dto);
     return {
-      data: teacher,
+      data: manager,
     };
   }
 
-  @Delete('teachers/:id')
+  @Delete('managers/:id')
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Delete teacher by ID' })
-  async deleteTeacher(@Param('id') id: string): Promise<{ message: string }> {
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Delete manager by ID' })
+  async deleteManager(@Param('id') id: string): Promise<{ message: string }> {
     await this.service.deleteUser(id);
     return {
-      message: 'Teacher deleted successfully',
+      message: 'Manager deleted successfully',
     };
   }
 
   @Get(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER)
   @ApiOperation({ summary: 'Get user by ID' })
   async getUserById(@Param('id') id: string): Promise<{ data: UserDto }> {
     const user = await this.service.findById(id);
@@ -188,7 +186,7 @@ export class UserController {
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER)
   @ApiOperation({ summary: 'Create new user' })
   async createUser(@Body() dto: CreateUserDto): Promise<{ data: UserDto }> {
     const user = await this.service.createUser(dto);

@@ -22,8 +22,11 @@ export class User extends Document {
   @Prop({ default: null })
   ui_language_id?: string;
 
-  @Prop({ type: String, enum: UserRole, default: UserRole.STUDENT })
+  @Prop({ type: String, enum: UserRole, default: UserRole.MEMBER })
   role: UserRole;
+
+  @Prop({ type: Buffer, required: false })
+  profile_image_buffer?: Buffer;
 
   @Prop({ default: [] })
   refreshToken: string[];

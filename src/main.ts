@@ -1,23 +1,13 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './utils/interceptors/transform.interceptor';
-import {
-  ClassSerializerInterceptor,
-  ValidationPipe,
-  VersioningType,
-} from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe, VersioningType } from '@nestjs/common';
 import { setupSwagger } from './utils/swagger/swagger.config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
-  // Serve static files from uploads directory
-  const uploadsDir = process.env.UPLOADS_DIR || join(process.cwd(), 'uploads');
-  app.useStaticAssets(uploadsDir, {
-    prefix: '/uploads/',
-  });
 
   app.enableCors({
     origin: '*',
