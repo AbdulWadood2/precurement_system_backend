@@ -1,5 +1,5 @@
 export interface IAuthHelper {
-  generateUniqueId(namespace: string): string;
+  generateUniqueId(namespace: string): Promise<string>;
   generateTokens(payload: {
     userId: string;
     role: string;

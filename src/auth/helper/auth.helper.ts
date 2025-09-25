@@ -15,9 +15,10 @@ export class AuthHelper implements IAuthHelper {
   ) {}
 
   // Generate Unique Id
-  generateUniqueId(namespace: string): string {
+  async generateUniqueId(namespace: string): Promise<string> {
+    const { v4: uuidv4 } = await import('uuid'); // Dynamic import for uuid
     const timestamp = Date.now(); // Current timestamp in milliseconds
-    const randomString = uuidv4(); // Generate a UUID (Universally Unique Identifier)
+    const randomString = uuidv4(); // Generate a UUID
     return `${namespace}-${timestamp}-${randomString}`;
   }
 
