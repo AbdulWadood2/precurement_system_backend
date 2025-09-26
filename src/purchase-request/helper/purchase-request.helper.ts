@@ -11,6 +11,7 @@ import {
   CreatePurchaseRequestDto,
   UpdatePurchaseRequestDto,
 } from '../dto/create-purchase-request.dto';
+import { PurchaseRequestFiltersDto } from '../dto/purchase-request-filters.dto';
 
 @Injectable()
 export class PurchaseRequestHelper implements IPurchaseRequestHelper {
@@ -47,7 +48,7 @@ export class PurchaseRequestHelper implements IPurchaseRequestHelper {
     page: number;
     limit: number;
   }> {
-    const query: any = {};
+    const query: Record<string, any> = {};
     if (filters?.status) query.status = filters.status;
     if (filters?.department) query.department = filters.department;
     if (filters?.priority) query.priority = filters.priority;
@@ -88,7 +89,7 @@ export class PurchaseRequestHelper implements IPurchaseRequestHelper {
     }
 
     // Validate ObjectIds in update data and prepare update object
-    const updateData: any = { ...dto };
+    const updateData: Record<string, any> = { ...dto };
 
     if (dto.requested_by_user_id) {
       if (!Types.ObjectId.isValid(dto.requested_by_user_id)) {
@@ -138,8 +139,11 @@ export class PurchaseRequestHelper implements IPurchaseRequestHelper {
       .exec();
   }
 
-  async search(query: string, filters?: any): Promise<PurchaseRequest[]> {
-    const searchQuery: any = {
+  async search(
+    query: string,
+    filters?: PurchaseRequestFiltersDto,
+  ): Promise<PurchaseRequest[]> {
+    const searchQuery: Record<string, any> = {
       $or: [
         { pr_number: { $regex: query, $options: 'i' } },
         { purpose: { $regex: query, $options: 'i' } },

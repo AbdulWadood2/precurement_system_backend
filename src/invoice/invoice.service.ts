@@ -2,6 +2,7 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IInvoiceService } from './interfaces/invoice.service.interface';
 import { IInvoiceHelper } from './interfaces/invoice.helper.interface';
 import { InvoiceDto } from './dto/invoice.dto';
+import { InvoiceFiltersDto } from './dto/invoice-filters.dto';
 import {
   CreateInvoiceDto,
   UpdateInvoiceDto,
@@ -124,7 +125,10 @@ export class InvoiceService implements IInvoiceService {
     }
   }
 
-  async search(query: string, filters?: any): Promise<InvoiceDto[]> {
+  async search(
+    query: string,
+    filters?: InvoiceFiltersDto,
+  ): Promise<InvoiceDto[]> {
     try {
       const invoices = await this.helper.search(query, filters);
       return invoices.map((invoice) =>

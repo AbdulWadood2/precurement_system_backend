@@ -2,14 +2,20 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IPurchaseOrderService } from './interfaces/purchase-order.service.interface';
 import { IPurchaseOrderHelper } from './interfaces/purchase-order.helper.interface';
 import { PurchaseOrderDto } from './dto/purchase-order.dto';
-import { CreatePurchaseOrderDto, UpdatePurchaseOrderDto, PurchaseOrderStatus } from './dto/create-purchase-order.dto';
+import { PurchaseOrderFiltersDto } from './dto/purchase-order-filters.dto';
+import {
+  CreatePurchaseOrderDto,
+  UpdatePurchaseOrderDto,
+  PurchaseOrderStatus,
+} from './dto/create-purchase-order.dto';
 import { plainToInstance } from 'class-transformer';
 import { logAndThrowError } from 'src/utils/errors/error.utils';
 
 @Injectable()
 export class PurchaseOrderService implements IPurchaseOrderService {
   constructor(
-    @Inject('IPurchaseOrderHelper') private readonly helper: IPurchaseOrderHelper,
+    @Inject('IPurchaseOrderHelper')
+    private readonly helper: IPurchaseOrderHelper,
   ) {}
 
   async create(dto: CreatePurchaseOrderDto): Promise<PurchaseOrderDto> {
@@ -27,11 +33,18 @@ export class PurchaseOrderService implements IPurchaseOrderService {
     requested_by_user_id?: string;
     page?: number;
     limit?: number;
-  }): Promise<{ data: PurchaseOrderDto[]; total: number; page: number; limit: number }> {
+  }): Promise<{
+    data: PurchaseOrderDto[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
     try {
       const { data, total, page, limit } = await this.helper.findAll(filters);
       return {
-        data: data.map((po) => plainToInstance(PurchaseOrderDto, JSON.parse(JSON.stringify(po)))),
+        data: data.map((po) =>
+          plainToInstance(PurchaseOrderDto, JSON.parse(JSON.stringify(po))),
+        ),
         total,
         page,
         limit,
@@ -49,11 +62,17 @@ export class PurchaseOrderService implements IPurchaseOrderService {
       }
       return plainToInstance(PurchaseOrderDto, JSON.parse(JSON.stringify(po)));
     } catch (error) {
-      throw logAndThrowError(`Failed to find purchase order with ID ${id}`, error);
+      throw logAndThrowError(
+        `Failed to find purchase order with ID ${id}`,
+        error,
+      );
     }
   }
 
-  async update(id: string, dto: UpdatePurchaseOrderDto): Promise<PurchaseOrderDto> {
+  async update(
+    id: string,
+    dto: UpdatePurchaseOrderDto,
+  ): Promise<PurchaseOrderDto> {
     try {
       const po = await this.helper.update(id, dto);
       if (!po) {
@@ -61,7 +80,10 @@ export class PurchaseOrderService implements IPurchaseOrderService {
       }
       return plainToInstance(PurchaseOrderDto, JSON.parse(JSON.stringify(po)));
     } catch (error) {
-      throw logAndThrowError(`Failed to update purchase order with ID ${id}`, error);
+      throw logAndThrowError(
+        `Failed to update purchase order with ID ${id}`,
+        error,
+      );
     }
   }
 
@@ -69,16 +91,27 @@ export class PurchaseOrderService implements IPurchaseOrderService {
     try {
       await this.helper.delete(id);
     } catch (error) {
-      throw logAndThrowError(`Failed to delete purchase order with ID ${id}`, error);
+      throw logAndThrowError(
+        `Failed to delete purchase order with ID ${id}`,
+        error,
+      );
     }
   }
 
-  async search(query: string, filters?: any): Promise<PurchaseOrderDto[]> {
+  async search(
+    query: string,
+    filters?: PurchaseOrderFiltersDto,
+  ): Promise<PurchaseOrderDto[]> {
     try {
       const pos = await this.helper.search(query, filters);
-      return pos.map((po) => plainToInstance(PurchaseOrderDto, JSON.parse(JSON.stringify(po))));
+      return pos.map((po) =>
+        plainToInstance(PurchaseOrderDto, JSON.parse(JSON.stringify(po))),
+      );
     } catch (error) {
-      throw logAndThrowError(`Failed to search purchase orders with query "${query}"`, error);
+      throw logAndThrowError(
+        `Failed to search purchase orders with query "${query}"`,
+        error,
+      );
     }
   }
 }

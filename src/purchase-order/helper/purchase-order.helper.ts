@@ -10,6 +10,7 @@ import {
   CreatePurchaseOrderDto,
   UpdatePurchaseOrderDto,
 } from '../dto/create-purchase-order.dto';
+import { PurchaseOrderFiltersDto } from '../dto/purchase-order-filters.dto';
 
 @Injectable()
 export class PurchaseOrderHelper implements IPurchaseOrderHelper {
@@ -92,7 +93,7 @@ export class PurchaseOrderHelper implements IPurchaseOrderHelper {
     page: number;
     limit: number;
   }> {
-    const query: any = {};
+    const query: Record<string, any> = {};
     if (filters?.status) query.status = filters.status;
     if (filters?.vendor_id) {
       if (!Types.ObjectId.isValid(filters.vendor_id)) {
@@ -137,7 +138,7 @@ export class PurchaseOrderHelper implements IPurchaseOrderHelper {
     }
 
     // Validate ObjectIds in update data and prepare update object
-    const updateData: any = { ...dto };
+    const updateData: Record<string, any> = { ...dto };
 
     if (dto.vendor_id) {
       if (!Types.ObjectId.isValid(dto.vendor_id)) {
@@ -210,8 +211,11 @@ export class PurchaseOrderHelper implements IPurchaseOrderHelper {
       .exec();
   }
 
-  async search(query: string, filters?: any): Promise<PurchaseOrder[]> {
-    const searchQuery: any = {
+  async search(
+    query: string,
+    filters?: PurchaseOrderFiltersDto,
+  ): Promise<PurchaseOrder[]> {
+    const searchQuery: Record<string, any> = {
       $or: [
         { po_number: { $regex: query, $options: 'i' } },
         { 'items.description': { $regex: query, $options: 'i' } },

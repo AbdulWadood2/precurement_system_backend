@@ -7,6 +7,7 @@ import {
   CreateReceivingDto,
   UpdateReceivingDto,
 } from '../dto/create-receiving.dto';
+import { ReceivingFiltersDto } from '../dto/receiving-filters.dto';
 
 @Injectable()
 export class ReceivingHelper implements IReceivingHelper {
@@ -63,7 +64,7 @@ export class ReceivingHelper implements IReceivingHelper {
     page: number;
     limit: number;
   }> {
-    const query: any = {};
+    const query: Record<string, any> = {};
     if (filters?.status) query.status = filters.status;
     if (filters?.vendor_id) {
       if (!Types.ObjectId.isValid(filters.vendor_id)) {
@@ -111,7 +112,7 @@ export class ReceivingHelper implements IReceivingHelper {
     }
 
     // Validate ObjectIds in update data and prepare update object
-    const updateData: any = { ...dto };
+    const updateData: Record<string, any> = { ...dto };
 
     if (dto.purchase_order_id) {
       if (!Types.ObjectId.isValid(dto.purchase_order_id)) {
@@ -160,8 +161,8 @@ export class ReceivingHelper implements IReceivingHelper {
     await this.receivingModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
 
-  async search(query: string, filters?: any): Promise<Receiving[]> {
-    const searchQuery: any = {
+  async search(query: string, filters?: ReceivingFiltersDto): Promise<Receiving[]> {
+    const searchQuery: Record<string, any> = {
       $or: [
         { receiving_number: { $regex: query, $options: 'i' } },
         { reference_number: { $regex: query, $options: 'i' } },

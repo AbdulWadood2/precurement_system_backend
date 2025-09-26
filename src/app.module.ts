@@ -8,6 +8,10 @@ import { PurchaseRequestModule } from './purchase-request/purchase-request.modul
 import { PurchaseOrderModule } from './purchase-order/purchase-order.module';
 import { ReceivingModule } from './receiving/receiving.module';
 import { InvoiceModule } from './invoice/invoice.module';
+import { PaymentVoucherModule } from './payment-voucher/payment-voucher.module';
+import { GeneralLedgerModule } from './general-ledger/general-ledger.module';
+import { ChartOfAccountsModule } from './chart-of-accounts/chart-of-accounts.module';
+import { JournalEntryModule } from './journal-entry/journal-entry.module';
 
 @Module({
   imports: [
@@ -34,6 +38,10 @@ import { InvoiceModule } from './invoice/invoice.module';
     PurchaseOrderModule,
     ReceivingModule,
     InvoiceModule,
+    PaymentVoucherModule,
+    GeneralLedgerModule,
+    ChartOfAccountsModule,
+    JournalEntryModule,
   ],
 })
 export class AppModule {}

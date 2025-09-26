@@ -92,8 +92,8 @@ export class PurchaseOrderController {
 
     return {
       data: {
-        pagination,
         items: data,
+        pagination,
       },
     };
   }

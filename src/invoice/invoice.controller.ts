@@ -94,8 +94,8 @@ export class InvoiceController {
 
     return {
       data: {
-        pagination,
         items: data,
+        pagination,
       },
     };
   }

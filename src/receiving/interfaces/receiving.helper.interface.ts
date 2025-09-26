@@ -3,6 +3,7 @@ import {
   CreateReceivingDto,
   UpdateReceivingDto,
 } from '../dto/create-receiving.dto';
+import { ReceivingFiltersDto } from '../dto/receiving-filters.dto';
 
 export interface IReceivingHelper {
   create(dto: CreateReceivingDto): Promise<Receiving>;
@@ -22,5 +23,5 @@ export interface IReceivingHelper {
   findById(id: string): Promise<Receiving | null>;
   update(id: string, dto: UpdateReceivingDto): Promise<Receiving | null>;
   delete(id: string): Promise<void>;
-  search(query: string, filters?: any): Promise<Receiving[]>;
+  search(query: string, filters?: ReceivingFiltersDto): Promise<Receiving[]>;
 }

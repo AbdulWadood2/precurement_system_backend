@@ -12,6 +12,7 @@ import {
   UpdateInvoiceDto,
   PaymentInvoiceDto,
 } from '../dto/create-invoice.dto';
+import { InvoiceFiltersDto } from '../dto/invoice-filters.dto';
 
 @Injectable()
 export class InvoiceHelper implements IInvoiceHelper {
@@ -69,7 +70,7 @@ export class InvoiceHelper implements IInvoiceHelper {
     page: number;
     limit: number;
   }> {
-    const query: any = {};
+    const query: Record<string, any> = {};
     if (filters?.status) query.status = filters.status;
     if (filters?.payment_status) query.payment_status = filters.payment_status;
     if (filters?.vendor_id) {
@@ -110,7 +111,7 @@ export class InvoiceHelper implements IInvoiceHelper {
     }
 
     // Validate ObjectIds in update data and prepare update object
-    const updateData: any = { ...dto };
+    const updateData: Record<string, any> = { ...dto };
 
     if (dto.purchase_order_id) {
       if (!Types.ObjectId.isValid(dto.purchase_order_id)) {
@@ -227,8 +228,8 @@ export class InvoiceHelper implements IInvoiceHelper {
     await this.invoiceModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
 
-  async search(query: string, filters?: any): Promise<Invoice[]> {
-    const searchQuery: any = {
+  async search(query: string, filters?: InvoiceFiltersDto): Promise<Invoice[]> {
+    const searchQuery: Record<string, any> = {
       $or: [
         { invoice_number: { $regex: query, $options: 'i' } },
         { reference_number: { $regex: query, $options: 'i' } },

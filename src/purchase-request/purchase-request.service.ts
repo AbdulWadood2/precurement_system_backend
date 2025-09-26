@@ -2,6 +2,7 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IPurchaseRequestService } from './interfaces/purchase-request.service.interface';
 import { IPurchaseRequestHelper } from './interfaces/purchase-request.helper.interface';
 import { PurchaseRequestDto } from './dto/purchase-request.dto';
+import { PurchaseRequestFiltersDto } from './dto/purchase-request-filters.dto';
 import {
   CreatePurchaseRequestDto,
   UpdatePurchaseRequestDto,
@@ -135,7 +136,10 @@ export class PurchaseRequestService implements IPurchaseRequestService {
     }
   }
 
-  async search(query: string, filters?: any): Promise<PurchaseRequestDto[]> {
+  async search(
+    query: string,
+    filters?: PurchaseRequestFiltersDto,
+  ): Promise<PurchaseRequestDto[]> {
     try {
       const prs = await this.helper.search(query, filters);
       return prs.map((pr) =>

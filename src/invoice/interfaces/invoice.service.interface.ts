@@ -1,4 +1,5 @@
 import { InvoiceDto } from '../dto/invoice.dto';
+import { InvoiceFiltersDto } from '../dto/invoice-filters.dto';
 import {
   CreateInvoiceDto,
   UpdateInvoiceDto,
@@ -32,5 +33,5 @@ export interface IInvoiceService {
   ): Promise<InvoiceDto>;
   recordPayment(id: string, dto: PaymentInvoiceDto): Promise<InvoiceDto>;
   delete(id: string): Promise<void>;
-  search(query: string, filters?: any): Promise<InvoiceDto[]>;
+  search(query: string, filters?: InvoiceFiltersDto): Promise<InvoiceDto[]>;
 }

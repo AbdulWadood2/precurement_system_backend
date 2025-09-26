@@ -92,8 +92,8 @@ export class ReceivingController {
 
     return {
       data: {
-        pagination,
         items: data,
+        pagination,
       },
     };
   }

@@ -2,6 +2,7 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IReceivingService } from './interfaces/receiving.service.interface';
 import { IReceivingHelper } from './interfaces/receiving.helper.interface';
 import { ReceivingDto } from './dto/receiving.dto';
+import { ReceivingFiltersDto } from './dto/receiving-filters.dto';
 import {
   CreateReceivingDto,
   UpdateReceivingDto,
@@ -95,7 +96,10 @@ export class ReceivingService implements IReceivingService {
     }
   }
 
-  async search(query: string, filters?: any): Promise<ReceivingDto[]> {
+  async search(
+    query: string,
+    filters?: ReceivingFiltersDto,
+  ): Promise<ReceivingDto[]> {
     try {
       const receivingRecords = await this.helper.search(query, filters);
       return receivingRecords.map((receiving) =>
