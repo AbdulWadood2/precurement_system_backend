@@ -47,14 +47,13 @@ export class GeneralLedgerController {
   async create(
     @Body() createGeneralLedgerDto: CreateGeneralLedgerDto,
     @Request() req,
-  ): Promise<{ data: GeneralLedgerDto; message: string }> {
+  ): Promise<{ data: GeneralLedgerDto }> {
     const generalLedger = await this.service.create(
       createGeneralLedgerDto,
       req['fullUser']._id.toString(),
     );
     return {
       data: generalLedger,
-      message: 'General ledger entry created successfully',
     };
   }
 
@@ -75,14 +74,14 @@ export class GeneralLedgerController {
     @Query('account') account?: string,
     @Query('date') date?: string,
     @Query('company') company?: string,
-  ): Promise<{ data: WrappedResponseDto<GeneralLedgerDto> }> {
+  ): Promise<WrappedResponseDto<GeneralLedgerDto>> {
     const filters: GeneralLedgerFiltersDto = {};
     if (account) filters.account = account;
     if (date) filters.date = date;
     if (company) filters.company = company;
 
     const result = await this.service.findAll(page, limit, filters);
-    return { data: result };
+    return result;
   }
 
   @Get('balance-sheet')
@@ -131,15 +130,14 @@ export class GeneralLedgerController {
     @Param('id') id: string,
     @Body() updateGeneralLedgerDto: UpdateGeneralLedgerDto,
     @Request() req,
-  ): Promise<{ data: GeneralLedgerDto; message: string }> {
+  ): Promise<{ data: GeneralLedgerDto }> {
     const generalLedger = await this.service.update(
       id,
       updateGeneralLedgerDto,
       req['fullUser']._id.toString(),
     );
     return {
-      data: generalLedger,
-      message: 'General ledger entry updated successfully',
+      data: generalLedger
     };
   }
 
@@ -147,9 +145,9 @@ export class GeneralLedgerController {
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   @ApiOperation({ summary: 'Delete general ledger entry (ADMIN, MANAGER)' })
-  async remove(@Param('id') id: string): Promise<{ message: string }> {
+  async remove(@Param('id') id: string): Promise<{ data: string }> {
     await this.service.remove(id);
-    return { message: 'General ledger entry deleted successfully' };
+    return { data: 'General ledger entry deleted successfully' };
   }
 
   @Get('account/:account')

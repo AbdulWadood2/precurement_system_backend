@@ -44,14 +44,13 @@ export class PaymentVoucherController {
   async create(
     @Body() createPaymentVoucherDto: CreatePaymentVoucherDto,
     @Request() req,
-  ): Promise<{ data: PaymentVoucherDto; message: string }> {
+  ): Promise<{ data: PaymentVoucherDto }> {
     const paymentVoucher = await this.service.create(
       createPaymentVoucherDto,
       req['fullUser']._id.toString(),
     );
     return {
       data: paymentVoucher,
-      message: 'Payment voucher created successfully',
     };
   }
 
@@ -74,7 +73,7 @@ export class PaymentVoucherController {
     @Query('vendor') vendor?: string,
     @Query('paymentType') paymentType?: string,
     @Query('partyType') partyType?: string,
-  ): Promise<{ data: WrappedResponseDto<PaymentVoucherDto> }> {
+  ): Promise<WrappedResponseDto<PaymentVoucherDto>> {
     const filters: PaymentVoucherFiltersDto = {};
     if (status) filters.status = status;
     if (vendor) filters.vendor = vendor;
@@ -82,7 +81,7 @@ export class PaymentVoucherController {
     if (partyType) filters.partyType = partyType;
 
     const result = await this.service.findAll(page, limit, filters);
-    return { data: result };
+    return result;
   }
 
   @Get(':id')
@@ -104,7 +103,7 @@ export class PaymentVoucherController {
     @Param('id') id: string,
     @Body() updatePaymentVoucherDto: UpdatePaymentVoucherDto,
     @Request() req,
-  ): Promise<{ data: PaymentVoucherDto; message: string }> {
+  ): Promise<{ data: PaymentVoucherDto }> {
     const paymentVoucher = await this.service.update(
       id,
       updatePaymentVoucherDto,
@@ -112,7 +111,6 @@ export class PaymentVoucherController {
     );
     return {
       data: paymentVoucher,
-      message: 'Payment voucher updated successfully',
     };
   }
 
@@ -120,9 +118,9 @@ export class PaymentVoucherController {
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   @ApiOperation({ summary: 'Delete payment voucher (ADMIN, MANAGER)' })
-  async remove(@Param('id') id: string): Promise<{ message: string }> {
+  async remove(@Param('id') id: string): Promise<{ data: string }> {
     await this.service.remove(id);
-    return { message: 'Payment voucher deleted successfully' };
+    return { data: 'Payment voucher deleted successfully' };
   }
 
   @Get('status/:status')

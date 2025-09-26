@@ -67,14 +67,13 @@ export class ChartOfAccountsController {
   async create(
     @Body() createChartOfAccountsDto: CreateChartOfAccountsDto,
     @Request() req,
-  ): Promise<{ data: ChartOfAccountsDto; message: string }> {
+  ): Promise<{ data: ChartOfAccountsDto }> {
     const chartOfAccounts = await this.service.create(
       createChartOfAccountsDto,
       req['fullUser']._id.toString(),
     );
     return {
-      data: chartOfAccounts,
-      message: 'Chart of accounts created successfully',
+      data: chartOfAccounts
     };
   }
 
@@ -228,7 +227,7 @@ export class ChartOfAccountsController {
     @Param('id') id: string,
     @Body() updateChartOfAccountsDto: UpdateChartOfAccountsDto,
     @Request() req,
-  ): Promise<{ data: ChartOfAccountsDto; message: string }> {
+  ): Promise<{ data: ChartOfAccountsDto }> {
     const chartOfAccounts = await this.service.update(
       id,
       updateChartOfAccountsDto,
@@ -236,7 +235,6 @@ export class ChartOfAccountsController {
     );
     return {
       data: chartOfAccounts,
-      message: 'Chart of accounts updated successfully',
     };
   }
 

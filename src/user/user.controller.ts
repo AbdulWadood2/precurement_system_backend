@@ -206,10 +206,10 @@ export class UserController {
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete manager by ID (OWNER, ADMIN)' })
-  async deleteManager(@Param('id') id: string): Promise<{ message: string }> {
+  async deleteManager(@Param('id') id: string): Promise<{ data: string }> {
     await this.service.deleteUser(id);
     return {
-      message: 'Manager deleted successfully',
+      data: 'Manager deleted successfully',
     };
   }
 

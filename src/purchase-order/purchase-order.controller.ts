@@ -28,7 +28,6 @@ import {
 } from './dto/create-purchase-order.dto';
 import { PurchaseOrderDto } from './dto/purchase-order.dto';
 import {
-  PaginatedResponseDto,
   WrappedResponseDto,
 } from 'src/utils/pagination/dto/paginated-response.dto';
 

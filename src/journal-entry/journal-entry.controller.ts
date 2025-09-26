@@ -44,14 +44,13 @@ export class JournalEntryController {
   async create(
     @Body() createJournalEntryDto: CreateJournalEntryDto,
     @Request() req,
-  ): Promise<{ data: JournalEntryDto; message: string }> {
+  ): Promise<{ data: JournalEntryDto }> {
     const journalEntry = await this.service.create(
       createJournalEntryDto,
       req['fullUser']._id.toString(),
     );
     return {
       data: journalEntry,
-      message: 'Journal entry created successfully',
     };
   }
 
@@ -70,14 +69,14 @@ export class JournalEntryController {
     @Query('entryType') entryType?: string,
     @Query('status') status?: string,
     @Query('company') company?: string,
-  ): Promise<{ data: WrappedResponseDto<JournalEntryDto> }> {
+  ): Promise<WrappedResponseDto<JournalEntryDto>> {
     const filters: JournalEntryFiltersDto = {};
     if (entryType) filters.entryType = entryType;
     if (status) filters.status = status;
     if (company) filters.company = company;
 
     const result = await this.service.findAll(page, limit, filters);
-    return { data: result };
+    return result;
   }
 
   @Get(':id')
@@ -97,15 +96,14 @@ export class JournalEntryController {
     @Param('id') id: string,
     @Body() updateJournalEntryDto: UpdateJournalEntryDto,
     @Request() req,
-  ): Promise<{ data: JournalEntryDto; message: string }> {
+  ): Promise<{ data: JournalEntryDto }> {
     const journalEntry = await this.service.update(
       id,
       updateJournalEntryDto,
       req['fullUser']._id.toString(),
     );
     return {
-      data: journalEntry,
-      message: 'Journal entry updated successfully',
+      data: journalEntry
     };
   }
 
@@ -113,9 +111,9 @@ export class JournalEntryController {
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   @ApiOperation({ summary: 'Delete journal entry (ADMIN, MANAGER)' })
-  async remove(@Param('id') id: string): Promise<{ message: string }> {
+  async remove(@Param('id') id: string): Promise<{ data: string }> {
     await this.service.remove(id);
-    return { message: 'Journal entry deleted successfully' };
+    return { data: 'Journal entry deleted successfully' };
   }
 
   @Post(':id/post')
@@ -125,11 +123,10 @@ export class JournalEntryController {
   async postEntry(
     @Param('id') id: string,
     @Request() req,
-  ): Promise<{ data: JournalEntryDto; message: string }> {
+  ): Promise<{ data: JournalEntryDto }> {
     const journalEntry = await this.service.postEntry(id);
     return {
       data: journalEntry,
-      message: 'Journal entry posted successfully',
     };
   }
 
