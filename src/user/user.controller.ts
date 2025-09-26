@@ -10,13 +10,17 @@ import {
   UseGuards,
   Request,
   Inject,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiTags,
   ApiQuery,
+  ApiConsumes,
 } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UserDto } from './dto/user.dto';
@@ -25,9 +29,13 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { UserRole } from './roles/roles.enum';
 import { CreateUserDto } from './dto/create-user.dto';
-import {} from './dto/update-profile.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import {
+  UploadProfileImageDto,
+  ProfileImageResponseDto,
+} from './dto/upload-profile-image.dto';
+import { UpdateUserFormDto } from './dto/update-user-form.dto';
+import { UpdateProfileFormDto } from './dto/update-profile-form.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -38,7 +46,7 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Get user profile' })
+  @ApiOperation({ summary: 'Get user profile (All authenticated users)' })
   async getProfile(@Request() req): Promise<{ data: UserDto }> {
     const user = await this.service.findById(req['fullUser']._id.toString());
     return {
@@ -50,14 +58,21 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Update user profile' })
+  @UseInterceptors(FileInterceptor('profile_image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Update user profile with form data including image (All authenticated users)' })
   async updateProfile(
     @Request() req,
-    @Body() dto: UpdateProfileDto,
+    @Body() dto: UpdateProfileFormDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<{ data: UserDto }> {
-    const user = await this.service.updateProfile(
+    const updateData = { ...dto };
+    if (file) {
+      updateData.profile_image = file;
+    }
+    const user = await this.service.updateProfileWithForm(
       req['fullUser']._id.toString(),
-      dto,
+      updateData,
     );
     return {
       data: user,
@@ -68,7 +83,7 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Change user password' })
+  @ApiOperation({ summary: 'Change user password (All authenticated users)' })
   async changePassword(
     @Request() req,
     @Body() dto: ChangePasswordDto,
@@ -82,11 +97,29 @@ export class UserController {
     };
   }
 
+  @Post('profile/upload-image')
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth('JWT-auth')
+  @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
+  @UseInterceptors(FileInterceptor('profile_image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload profile image (All authenticated users)' })
+  async uploadProfileImage(
+    @Request() req,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<{ data: ProfileImageResponseDto }> {
+    const result = await this.service.uploadProfileImage(
+      req['fullUser']._id.toString(),
+      file,
+    );
+    return { data: result };
+  }
+
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({ summary: 'Get all users (OWNER, ADMIN, MANAGER)' })
   @ApiQuery({ name: 'role', required: false, enum: UserRole })
   async getAllUsers(
     @Query('role') role?: UserRole,
@@ -101,7 +134,9 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Search users by name or email' })
+  @ApiOperation({
+    summary: 'Search users by name or email (OWNER, ADMIN, MANAGER)',
+  })
   @ApiQuery({ name: 'q', required: false, description: 'Search query' })
   @ApiQuery({ name: 'role', required: false, enum: UserRole })
   @ApiQuery({ name: 'limit', required: false, description: 'Limit results' })
@@ -121,7 +156,7 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get all managers' })
+  @ApiOperation({ summary: 'Get all managers (OWNER, ADMIN)' })
   async getAllManagers(): Promise<{ data: UserDto[] }> {
     const managers = await this.service.findAll(UserRole.MANAGER);
     return {
@@ -133,10 +168,8 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Create new manager' })
-  async createManager(
-    @Body() dto: CreateUserDto,
-  ): Promise<{ data: UserDto }> {
+  @ApiOperation({ summary: 'Create new manager (OWNER, ADMIN)' })
+  async createManager(@Body() dto: CreateUserDto): Promise<{ data: UserDto }> {
     const managerData = { ...dto, role: UserRole.MANAGER };
     const manager = await this.service.createUser(managerData);
     return {
@@ -148,12 +181,21 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Update manager by ID' })
+  @UseInterceptors(FileInterceptor('profile_image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    summary: 'Update manager with form data including image (OWNER, ADMIN)',
+  })
   async updateManager(
     @Param('id') id: string,
-    @Body() dto: UpdateUserDto,
+    @Body() dto: UpdateUserFormDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<{ data: UserDto }> {
-    const manager = await this.service.updateUser(id, dto);
+    const updateData = { ...dto };
+    if (file) {
+      updateData.profile_image = file;
+    }
+    const manager = await this.service.updateUserWithForm(id, updateData);
     return {
       data: manager,
     };
@@ -163,7 +205,7 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Delete manager by ID' })
+  @ApiOperation({ summary: 'Delete manager by ID (OWNER, ADMIN)' })
   async deleteManager(@Param('id') id: string): Promise<{ message: string }> {
     await this.service.deleteUser(id);
     return {
@@ -175,7 +217,7 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiOperation({ summary: 'Get user by ID (OWNER, ADMIN, MANAGER)' })
   async getUserById(@Param('id') id: string): Promise<{ data: UserDto }> {
     const user = await this.service.findById(id);
     return {
@@ -187,7 +229,7 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Create new user' })
+  @ApiOperation({ summary: 'Create new user (OWNER, ADMIN, MANAGER)' })
   async createUser(@Body() dto: CreateUserDto): Promise<{ data: UserDto }> {
     const user = await this.service.createUser(dto);
     return {

@@ -25,7 +25,7 @@ export class AuthController {
   constructor(@Inject('IAuthService') private authService: IAuthService) {}
 
   @Post('login')
-  @ApiOperation({ summary: 'User login' })
+  @ApiOperation({ summary: 'User login (Public)' })
   @ApiBody({ type: LoginDto })
   async login(@Body() dto: LoginDto): Promise<{
     data: UserDto;
@@ -37,7 +37,7 @@ export class AuthController {
   }
 
   @Post('register')
-  @ApiOperation({ summary: 'User registration' })
+  @ApiOperation({ summary: 'User registration (Public)' })
   @ApiBody({ type: RegisterDto })
   async register(@Body() registerDto: RegisterDto): Promise<{
     data: UserDto;
@@ -48,7 +48,7 @@ export class AuthController {
     };
   }
 
-  @ApiOperation({ summary: 'Logout user by invalidating refresh token' })
+  @ApiOperation({ summary: 'Logout user by invalidating refresh token (All authenticated users)' })
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.MEMBER, UserRole.ADMIN, UserRole.MANAGER, UserRole.OWNER)
@@ -58,7 +58,7 @@ export class AuthController {
     return { data: 'logout successfully' };
   }
 
-  @ApiOperation({ summary: 'Refresh the access token using the refresh token' })
+  @ApiOperation({ summary: 'Refresh the access token using the refresh token (All authenticated users)' })
   @ApiBearerAuth('JWT-auth') // Indicates Bearer Auth for Swagger UI
   @Post('refresh-token')
   async refreshToken(
@@ -73,7 +73,7 @@ export class AuthController {
     return this.authService.refreshToken(token); // Call the service with the token
   }
 
-  @ApiOperation({ summary: 'Verify if the access token is valid' })
+  @ApiOperation({ summary: 'Verify if the access token is valid (All authenticated users)' })
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   @Get('verify')

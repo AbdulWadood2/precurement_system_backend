@@ -9,23 +9,27 @@ import {
 import { UserRole } from '../roles/roles.enum';
 import { Language } from '../enums/language.enum';
 
-export class CreateUserDto {
-  @ApiProperty({ example: 'john.doe@example.com' })
+export class UpdateUserFormDto {
+  @ApiProperty({ required: false, example: 'john.doe@example.com' })
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
-  @ApiProperty({ example: 'John Doe' })
+  @ApiProperty({ required: false, example: 'John Doe' })
+  @IsOptional()
   @IsString()
-  display_name: string;
+  display_name?: string;
 
-  @ApiProperty({ example: 'password123' })
+  @ApiProperty({ required: false, example: 'password123' })
+  @IsOptional()
   @IsString()
   @MinLength(6)
-  password: string;
+  password?: string;
 
-  @ApiProperty({ enum: UserRole, example: UserRole.MEMBER })
+  @ApiProperty({ required: false, enum: UserRole, example: UserRole.MEMBER })
+  @IsOptional()
   @IsEnum(UserRole)
-  role: UserRole;
+  role?: UserRole;
 
   @ApiProperty({ required: false, example: 'US' })
   @IsOptional()
@@ -51,4 +55,13 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(Language)
   ui_language_id?: Language;
+
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: 'Profile image file (JPEG, PNG, GIF)',
+    required: false,
+  })
+  @IsOptional()
+  profile_image?: Express.Multer.File;
 }

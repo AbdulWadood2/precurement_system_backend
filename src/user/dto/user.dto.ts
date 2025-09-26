@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from '../roles/roles.enum';
+import { Language } from '../enums/language.enum';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 
 export class UserDto {
@@ -36,15 +37,15 @@ export class UserDto {
   @Transform(({ value }) =>
     value === undefined || value === null ? null : value,
   )
-  @ApiProperty({ required: false })
-  native_language_id?: string;
+  @ApiProperty({ required: false, enum: Language })
+  native_language_id?: Language;
 
   @Expose()
   @Transform(({ value }) =>
     value === undefined || value === null ? null : value,
   )
-  @ApiProperty({ required: false })
-  ui_language_id?: string;
+  @ApiProperty({ required: false, enum: Language })
+  ui_language_id?: Language;
 
   @Expose()
   @Transform(({ value }) =>
@@ -57,8 +58,13 @@ export class UserDto {
   @Transform(({ value }) =>
     value === undefined || value === null ? null : value,
   )
-  @ApiProperty({ required: false })
-  profile_image_buffer?: Buffer;
+  @ApiProperty({
+    required: false,
+    type: 'string',
+    format: 'binary',
+    description: 'Profile image as base64 string',
+  })
+  profile_image_buffer?: string;
 
   @Expose()
   @Transform(({ value }) =>

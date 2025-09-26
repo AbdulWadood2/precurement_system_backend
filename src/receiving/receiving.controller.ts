@@ -41,7 +41,7 @@ export class ReceivingController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Create a new receiving record' })
+  @ApiOperation({ summary: 'Create a new receiving record (ADMIN, MANAGER)' })
   async create(
     @Body() dto: CreateReceivingDto,
   ): Promise<{ data: ReceivingDto }> {
@@ -53,7 +53,7 @@ export class ReceivingController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Get all receiving records' })
+  @ApiOperation({ summary: 'Get all receiving records (ADMIN, MANAGER, MEMBER)' })
   @ApiQuery({ name: 'status', required: false, enum: ReceivingStatus })
   @ApiQuery({ name: 'vendor_id', required: false, type: String })
   @ApiQuery({ name: 'warehouse_id', required: false, type: String })
@@ -102,7 +102,7 @@ export class ReceivingController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Search receiving records' })
+  @ApiOperation({ summary: 'Search receiving records (ADMIN, MANAGER, MEMBER)' })
   @ApiQuery({
     name: 'q',
     required: true,
@@ -130,7 +130,7 @@ export class ReceivingController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Get a receiving record by ID' })
+  @ApiOperation({ summary: 'Get a receiving record by ID (ADMIN, MANAGER, MEMBER)' })
   async findById(@Param('id') id: string): Promise<{ data: ReceivingDto }> {
     const receiving = await this.service.findById(id);
     return { data: receiving };
@@ -140,7 +140,7 @@ export class ReceivingController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Update a receiving record by ID' })
+  @ApiOperation({ summary: 'Update a receiving record by ID (ADMIN, MANAGER)' })
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateReceivingDto,
@@ -153,7 +153,7 @@ export class ReceivingController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Delete a receiving record by ID' })
+  @ApiOperation({ summary: 'Delete a receiving record by ID (ADMIN, MANAGER)' })
   async delete(@Param('id') id: string): Promise<{ data: string }> {
     await this.service.delete(id);
     return { data: 'Receiving record deleted successfully' };

@@ -6,8 +6,10 @@ import { User } from '../schema/user.schema';
 import { plainToInstance } from 'class-transformer';
 import { UserDto } from '../dto/user.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { UpdateUserFormDto } from '../dto/update-user-form.dto';
+import { UpdateProfileFormDto } from '../dto/update-profile-form.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+import { ProfileImageResponseDto } from '../dto/upload-profile-image.dto';
 import { IEncryptionService } from 'src/encryption/interface/encryption.interface.service';
 import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UserRole } from '../roles/roles.enum';
@@ -141,26 +143,6 @@ export class UserHelper implements IUserHelper {
     return mongoQuery.exec();
   }
 
-  async updateUser(id: string, dto: UpdateUserDto): Promise<User> {
-    const updateData: any = { ...dto };
-
-    // If password is provided, encrypt it
-    if (dto.password) {
-      updateData.password_hash = await this.encryptionService.encrypt(
-        dto.password,
-      );
-      delete updateData.password;
-    }
-
-    const result = await this.userModel
-      .findByIdAndUpdate(id, updateData, { new: true })
-      .exec();
-    if (!result) {
-      throw new Error('User not found');
-    }
-    return result;
-  }
-
   async changePassword(id: string, dto: ChangePasswordDto): Promise<User> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
@@ -198,5 +180,146 @@ export class UserHelper implements IUserHelper {
     if (!result) {
       throw new Error('User not found');
     }
+  }
+
+  async uploadProfileImage(
+    id: string,
+    file: Express.Multer.File,
+  ): Promise<ProfileImageResponseDto> {
+    // Validate file type
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      throw new Error(
+        'Invalid file type. Only JPEG, PNG, and GIF are allowed.',
+      );
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      throw new Error('File size too large. Maximum size is 5MB.');
+    }
+
+    // Convert file buffer to base64
+    const base64Image = file.buffer.toString('base64');
+    const mimeType = file.mimetype;
+    const profileImageUrl = `data:${mimeType};base64,${base64Image}`;
+
+    // Update user profile image
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(
+        id,
+        { profile_image_buffer: file.buffer },
+        { new: true },
+      )
+      .exec();
+
+    if (!updatedUser) {
+      throw new Error('User not found');
+    }
+
+    return {
+      message: 'Profile image uploaded successfully',
+      profile_image_url: profileImageUrl,
+    };
+  }
+
+  async updateUserWithForm(
+    id: string,
+    dto: UpdateUserFormDto,
+  ): Promise<UserDto> {
+    const updateData: any = {};
+
+    // Handle regular fields
+    if (dto.email) updateData.email = dto.email;
+    if (dto.display_name) updateData.display_name = dto.display_name;
+    if (dto.role) updateData.role = dto.role;
+    if (dto.country_code) updateData.country_code = dto.country_code;
+    if (dto.native_language_id)
+      updateData.native_language_id = dto.native_language_id;
+    if (dto.ui_language_id) updateData.ui_language_id = dto.ui_language_id;
+
+    // Handle password if provided
+    if (dto.password) {
+      updateData.password_hash = await this.encryptionService.encrypt(
+        dto.password,
+      );
+    }
+
+    // Handle profile image if provided
+    if (dto.profile_image) {
+      // Validate file type
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!allowedMimeTypes.includes(dto.profile_image.mimetype)) {
+        throw new Error(
+          'Invalid file type. Only JPEG, PNG, and GIF are allowed.',
+        );
+      }
+
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (dto.profile_image.size > maxSize) {
+        throw new Error('File size too large. Maximum size is 5MB.');
+      }
+
+      updateData.profile_image_buffer = dto.profile_image.buffer;
+    }
+
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .exec();
+
+    if (!updatedUser) {
+      throw new Error('User not found');
+    }
+
+    return plainToInstance(UserDto, updatedUser, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async updateProfileWithForm(
+    id: string,
+    dto: UpdateProfileFormDto,
+  ): Promise<UserDto> {
+    const updateData: any = {};
+
+    // Handle regular fields
+    if (dto.display_name) updateData.display_name = dto.display_name;
+    if (dto.country_code) updateData.country_code = dto.country_code;
+    if (dto.native_language_id)
+      updateData.native_language_id = dto.native_language_id;
+    if (dto.ui_language_id) updateData.ui_language_id = dto.ui_language_id;
+
+    // Handle profile image if provided
+    if (dto.profile_image) {
+      // Validate file type
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!allowedMimeTypes.includes(dto.profile_image.mimetype)) {
+        throw new Error(
+          'Invalid file type. Only JPEG, PNG, and GIF are allowed.',
+        );
+      }
+
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (dto.profile_image.size > maxSize) {
+        throw new Error('File size too large. Maximum size is 5MB.');
+      }
+
+      updateData.profile_image_buffer = dto.profile_image.buffer;
+    }
+
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .exec();
+
+    if (!updatedUser) {
+      throw new Error('User not found');
+    }
+
+    return plainToInstance(UserDto, updatedUser, {
+      excludeExtraneousValues: true,
+    });
   }
 }

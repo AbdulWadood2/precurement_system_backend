@@ -44,7 +44,7 @@ export class PurchaseRequestController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Create a new purchase request' })
+  @ApiOperation({ summary: 'Create a new purchase request (ADMIN, MANAGER, MEMBER)' })
   async create(
     @Body() dto: CreatePurchaseRequestDto,
   ): Promise<{ data: PurchaseRequestDto }> {
@@ -56,7 +56,7 @@ export class PurchaseRequestController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Get all purchase requests' })
+  @ApiOperation({ summary: 'Get all purchase requests (ADMIN, MANAGER, MEMBER)' })
   @ApiQuery({ name: 'status', required: false, enum: PurchaseRequestStatus })
   @ApiQuery({ name: 'department', required: false, type: String })
   @ApiQuery({ name: 'priority', required: false, enum: Priority })
@@ -105,7 +105,7 @@ export class PurchaseRequestController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Search purchase requests' })
+  @ApiOperation({ summary: 'Search purchase requests (ADMIN, MANAGER, MEMBER)' })
   @ApiQuery({
     name: 'q',
     required: true,
@@ -133,7 +133,7 @@ export class PurchaseRequestController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Get a purchase request by ID' })
+  @ApiOperation({ summary: 'Get a purchase request by ID (ADMIN, MANAGER, MEMBER)' })
   async findById(
     @Param('id') id: string,
   ): Promise<{ data: PurchaseRequestDto }> {
@@ -145,7 +145,7 @@ export class PurchaseRequestController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Update a purchase request by ID' })
+  @ApiOperation({ summary: 'Update a purchase request by ID (ADMIN, MANAGER, MEMBER)' })
   async update(
     @Param('id') id: string,
     @Body() dto: UpdatePurchaseRequestDto,
@@ -158,7 +158,7 @@ export class PurchaseRequestController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Approve or reject a purchase request by ID' })
+  @ApiOperation({ summary: 'Approve or reject a purchase request by ID (ADMIN, MANAGER)' })
   async approve(
     @Param('id') id: string,
     @Body() dto: ApprovePurchaseRequestDto,
@@ -173,7 +173,7 @@ export class PurchaseRequestController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Delete a purchase request by ID' })
+  @ApiOperation({ summary: 'Delete a purchase request by ID (ADMIN, MANAGER)' })
   async delete(@Param('id') id: string): Promise<{ data: string }> {
     await this.service.delete(id);
     return { data: 'Purchase Request deleted successfully' };

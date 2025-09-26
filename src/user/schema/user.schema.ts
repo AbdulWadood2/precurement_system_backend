@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { UserRole } from '../roles/roles.enum';
+import { Language } from '../enums/language.enum';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -16,11 +17,11 @@ export class User extends Document {
   @Prop({ default: null })
   country_code?: string;
 
-  @Prop({ default: null })
-  native_language_id?: string;
+  @Prop({ type: String, enum: Language, default: Language.ENGLISH })
+  native_language_id?: Language;
 
-  @Prop({ default: null })
-  ui_language_id?: string;
+  @Prop({ type: String, enum: Language, default: Language.ENGLISH })
+  ui_language_id?: Language;
 
   @Prop({ type: String, enum: UserRole, default: UserRole.MEMBER })
   role: UserRole;
@@ -37,3 +38,4 @@ export const UserSchema = SchemaFactory.createForClass(User);
 // Create indexes for efficient querying
 UserSchema.index({ native_language_id: 1 });
 UserSchema.index({ ui_language_id: 1 });
+UserSchema.index({ role: 1 });

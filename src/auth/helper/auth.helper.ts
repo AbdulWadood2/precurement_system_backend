@@ -16,7 +16,6 @@ export class AuthHelper implements IAuthHelper {
 
   // Generate Unique Id
   async generateUniqueId(namespace: string): Promise<string> {
-    const { v4: uuidv4 } = await import('uuid'); // Dynamic import for uuid
     const timestamp = Date.now(); // Current timestamp in milliseconds
     const randomString = uuidv4(); // Generate a UUID
     return `${namespace}-${timestamp}-${randomString}`;
@@ -29,7 +28,7 @@ export class AuthHelper implements IAuthHelper {
     email: string;
   }): Promise<{ accessToken: string; refreshToken: string }> {
     // generate otp
-    const uniqueId = this.generateUniqueId('default');
+    const uniqueId = await this.generateUniqueId('default');
     const accessToken = this.jwtService.sign(
       {
         userId: payload.userId,

@@ -45,7 +45,7 @@ export class InvoiceController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Create a new invoice' })
+  @ApiOperation({ summary: 'Create a new invoice (ADMIN, MANAGER)' })
   async create(@Body() dto: CreateInvoiceDto): Promise<{ data: InvoiceDto }> {
     const invoice = await this.service.create(dto);
     return { data: invoice };
@@ -55,7 +55,7 @@ export class InvoiceController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Get all invoices' })
+  @ApiOperation({ summary: 'Get all invoices (ADMIN, MANAGER, MEMBER)' })
   @ApiQuery({ name: 'status', required: false, enum: InvoiceStatus })
   @ApiQuery({ name: 'payment_status', required: false, enum: PaymentStatus })
   @ApiQuery({ name: 'vendor_id', required: false, type: String })
@@ -104,7 +104,7 @@ export class InvoiceController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Search invoices' })
+  @ApiOperation({ summary: 'Search invoices (ADMIN, MANAGER, MEMBER)' })
   @ApiQuery({
     name: 'q',
     required: true,
@@ -132,7 +132,7 @@ export class InvoiceController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER)
-  @ApiOperation({ summary: 'Get an invoice by ID' })
+  @ApiOperation({ summary: 'Get an invoice by ID (ADMIN, MANAGER, MEMBER)' })
   async findById(@Param('id') id: string): Promise<{ data: InvoiceDto }> {
     const invoice = await this.service.findById(id);
     return { data: invoice };
@@ -142,7 +142,7 @@ export class InvoiceController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Update an invoice by ID' })
+  @ApiOperation({ summary: 'Update an invoice by ID (ADMIN, MANAGER)' })
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateInvoiceDto,
@@ -155,7 +155,7 @@ export class InvoiceController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Approve or reject an invoice by ID' })
+  @ApiOperation({ summary: 'Approve or reject an invoice by ID (ADMIN, MANAGER)' })
   async approve(
     @Param('id') id: string,
     @Body() dto: ApproveInvoiceDto,
@@ -170,7 +170,7 @@ export class InvoiceController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Record payment for an invoice by ID' })
+  @ApiOperation({ summary: 'Record payment for an invoice by ID (ADMIN, MANAGER)' })
   async recordPayment(
     @Param('id') id: string,
     @Body() dto: PaymentInvoiceDto,
@@ -183,7 +183,7 @@ export class InvoiceController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth('JWT-auth')
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
-  @ApiOperation({ summary: 'Delete an invoice by ID' })
+  @ApiOperation({ summary: 'Delete an invoice by ID (ADMIN, MANAGER)' })
   async delete(@Param('id') id: string): Promise<{ data: string }> {
     await this.service.delete(id);
     return { data: 'Invoice deleted successfully' };

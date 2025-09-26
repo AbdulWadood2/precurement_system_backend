@@ -1,31 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsString,
-  IsEnum,
-  IsOptional,
-  MinLength,
-} from 'class-validator';
-import { UserRole } from '../roles/roles.enum';
+import { IsOptional, IsString, MinLength, IsEnum } from 'class-validator';
 import { Language } from '../enums/language.enum';
 
-export class CreateUserDto {
-  @ApiProperty({ example: 'john.doe@example.com' })
-  @IsEmail()
-  email: string;
-
-  @ApiProperty({ example: 'John Doe' })
+export class UpdateProfileFormDto {
+  @ApiProperty({ required: false, example: 'John Doe' })
+  @IsOptional()
   @IsString()
-  display_name: string;
-
-  @ApiProperty({ example: 'password123' })
-  @IsString()
-  @MinLength(6)
-  password: string;
-
-  @ApiProperty({ enum: UserRole, example: UserRole.MEMBER })
-  @IsEnum(UserRole)
-  role: UserRole;
+  @MinLength(2)
+  display_name?: string;
 
   @ApiProperty({ required: false, example: 'US' })
   @IsOptional()
@@ -35,7 +17,6 @@ export class CreateUserDto {
   @ApiProperty({
     required: false,
     enum: Language,
-    example: Language.ENGLISH,
     description: 'Native language of the user',
   })
   @IsOptional()
@@ -45,10 +26,18 @@ export class CreateUserDto {
   @ApiProperty({
     required: false,
     enum: Language,
-    example: Language.ENGLISH,
     description: 'UI language preference of the user',
   })
   @IsOptional()
   @IsEnum(Language)
   ui_language_id?: Language;
+
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: 'Profile image file (JPEG, PNG, GIF)',
+    required: false,
+  })
+  @IsOptional()
+  profile_image?: Express.Multer.File;
 }

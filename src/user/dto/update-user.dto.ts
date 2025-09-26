@@ -7,6 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { UserRole } from '../roles/roles.enum';
+import { Language } from '../enums/language.enum';
 
 export class UpdateUserDto {
   @ApiProperty({ required: false, example: 'john.doe@example.com' })
@@ -35,13 +36,23 @@ export class UpdateUserDto {
   @IsString()
   country_code?: string;
 
-  @ApiProperty({ required: false, example: '507f1f77bcf86cd799439011' })
+  @ApiProperty({
+    required: false,
+    enum: Language,
+    example: Language.ENGLISH,
+    description: 'Native language of the user',
+  })
   @IsOptional()
-  @IsString()
-  native_language_id?: string;
+  @IsEnum(Language)
+  native_language_id?: Language;
 
-  @ApiProperty({ required: false, example: '507f1f77bcf86cd799439011' })
+  @ApiProperty({
+    required: false,
+    enum: Language,
+    example: Language.ENGLISH,
+    description: 'UI language preference of the user',
+  })
   @IsOptional()
-  @IsString()
-  ui_language_id?: string;
+  @IsEnum(Language)
+  ui_language_id?: Language;
 }

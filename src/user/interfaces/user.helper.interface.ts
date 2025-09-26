@@ -1,8 +1,10 @@
 import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UserDto } from '../dto/user.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { UpdateUserFormDto } from '../dto/update-user-form.dto';
+import { UpdateProfileFormDto } from '../dto/update-profile-form.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+import { ProfileImageResponseDto } from '../dto/upload-profile-image.dto';
 import { User } from '../schema/user.schema';
 import { UserRole } from '../roles/roles.enum';
 
@@ -14,7 +16,8 @@ export interface IUserHelper {
   findAll(role?: UserRole): Promise<User[]>;
   searchUsers(query?: string, role?: UserRole, limit?: number): Promise<User[]>;
   updateProfile(id: string, updateData: any): Promise<User>;
-  updateUser(id: string, dto: UpdateUserDto): Promise<User>;
+  updateUserWithForm(id: string, dto: UpdateUserFormDto): Promise<UserDto>;
+  updateProfileWithForm(id: string, dto: UpdateProfileFormDto): Promise<UserDto>;
   changePassword(id: string, dto: ChangePasswordDto): Promise<User>;
   deleteUser(id: string): Promise<void>;
   comparePassword(password: string, hash: string): Promise<boolean>;
@@ -27,4 +30,9 @@ export interface IUserHelper {
     refreshToken: string;
   }): Promise<User | null>;
   findUserWithDto(id: string): Promise<UserDto | null>;
+  uploadProfileImage(
+    id: string,
+    file: Express.Multer.File,
+  ): Promise<ProfileImageResponseDto>;
+  updateUserWithForm(id: string, dto: UpdateUserFormDto): Promise<UserDto>;
 }

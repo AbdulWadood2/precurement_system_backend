@@ -3,8 +3,10 @@ import { IUserService } from './interfaces/user.service.interface';
 import { IUserHelper } from './interfaces/user.helper.interface';
 import { UserDto } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserFormDto } from './dto/update-user-form.dto';
+import { UpdateProfileFormDto } from './dto/update-profile-form.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ProfileImageResponseDto } from './dto/upload-profile-image.dto';
 import { plainToInstance } from 'class-transformer';
 import { logAndThrowError } from 'src/utils/errors/error.utils';
 import { UserRole } from './roles/roles.enum';
@@ -54,15 +56,6 @@ export class UserService implements IUserService {
     }
   }
 
-  async updateUser(id: string, dto: UpdateUserDto): Promise<UserDto> {
-    try {
-      const user = await this.helper.updateUser(id, dto);
-      return plainToInstance(UserDto, JSON.parse(JSON.stringify(user)));
-    } catch (error) {
-      throw logAndThrowError('Failed to update user', error);
-    }
-  }
-
   async changePassword(id: string, dto: ChangePasswordDto): Promise<UserDto> {
     try {
       const user = await this.helper.changePassword(id, dto);
@@ -92,6 +85,39 @@ export class UserService implements IUserService {
       await this.helper.deleteUser(id);
     } catch (error) {
       throw logAndThrowError('Failed to delete user', error);
+    }
+  }
+
+  async uploadProfileImage(
+    id: string,
+    file: Express.Multer.File,
+  ): Promise<ProfileImageResponseDto> {
+    try {
+      return await this.helper.uploadProfileImage(id, file);
+    } catch (error) {
+      throw logAndThrowError('Failed to upload profile image', error);
+    }
+  }
+
+  async updateUserWithForm(
+    id: string,
+    dto: UpdateUserFormDto,
+  ): Promise<UserDto> {
+    try {
+      return await this.helper.updateUserWithForm(id, dto);
+    } catch (error) {
+      throw logAndThrowError('Failed to update user with form data', error);
+    }
+  }
+
+  async updateProfileWithForm(
+    id: string,
+    dto: UpdateProfileFormDto,
+  ): Promise<UserDto> {
+    try {
+      return await this.helper.updateProfileWithForm(id, dto);
+    } catch (error) {
+      throw logAndThrowError('Failed to update profile with form data', error);
     }
   }
 }
