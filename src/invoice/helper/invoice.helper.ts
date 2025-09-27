@@ -248,4 +248,17 @@ export class InvoiceHelper implements IInvoiceHelper {
 
     return this.invoiceModel.find(searchQuery).exec();
   }
+
+  async countInvoices(): Promise<number> {
+    return await this.invoiceModel.countDocuments();
+  }
+
+  async getRecentInvoices(limit: number): Promise<Invoice[]> {
+    return await this.invoiceModel
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate('vendor_id', 'company')
+      .exec();
+  }
 }

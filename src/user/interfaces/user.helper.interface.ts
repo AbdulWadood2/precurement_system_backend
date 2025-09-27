@@ -17,9 +17,15 @@ export interface IUserHelper {
   searchUsers(query?: string, role?: UserRole, limit?: number): Promise<User[]>;
   updateProfile(id: string, updateData: any): Promise<User>;
   updateUserWithForm(id: string, dto: UpdateUserFormDto): Promise<UserDto>;
-  updateProfileWithForm(id: string, dto: UpdateProfileFormDto): Promise<UserDto>;
+  updateProfileWithForm(
+    id: string,
+    dto: UpdateProfileFormDto,
+  ): Promise<UserDto>;
   changePassword(id: string, dto: ChangePasswordDto): Promise<User>;
   deleteUser(id: string): Promise<void>;
+  countUsers(): Promise<number>;
+  countActiveUsers(): Promise<number>;
+  countUsersByDateRange(startDate: Date, endDate: Date): Promise<number>;
   comparePassword(password: string, hash: string): Promise<boolean>;
   pushRefreshToken(payload: {
     _id: string;

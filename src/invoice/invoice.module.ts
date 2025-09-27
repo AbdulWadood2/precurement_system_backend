@@ -18,6 +18,9 @@ import { AuthModule } from 'src/auth/auth.module';
     { provide: 'IInvoiceService', useClass: InvoiceService },
   ],
   controllers: [InvoiceController],
-  exports: [{ provide: 'IInvoiceService', useClass: InvoiceService }],
+  exports: [
+    { provide: 'IInvoiceHelper', useClass: InvoiceHelper },
+    { provide: 'IInvoiceService', useClass: InvoiceService },
+  ],
 })
 export class InvoiceModule {}

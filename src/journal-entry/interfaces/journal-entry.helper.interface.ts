@@ -43,4 +43,5 @@ export interface IJournalEntryHelper {
   calculateTotals(accountingEntries: any[]): JournalTotalsDto;
 
   validateDebitCreditBalance(totalDebit: number, totalCredit: number): boolean;
+  countJournalEntries(): Promise<number>;
 }

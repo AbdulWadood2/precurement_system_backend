@@ -161,7 +161,10 @@ export class ReceivingHelper implements IReceivingHelper {
     await this.receivingModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
 
-  async search(query: string, filters?: ReceivingFiltersDto): Promise<Receiving[]> {
+  async search(
+    query: string,
+    filters?: ReceivingFiltersDto,
+  ): Promise<Receiving[]> {
     const searchQuery: Record<string, any> = {
       $or: [
         { receiving_number: { $regex: query, $options: 'i' } },
@@ -184,5 +187,9 @@ export class ReceivingHelper implements IReceivingHelper {
     }
 
     return this.receivingModel.find(searchQuery).exec();
+  }
+
+  async countReceivingRecords(): Promise<number> {
+    return await this.receivingModel.countDocuments();
   }
 }

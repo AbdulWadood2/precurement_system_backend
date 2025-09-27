@@ -56,4 +56,5 @@ export interface IGeneralLedgerHelper {
   generateIncomeStatement(entries: GeneralLedgerDocument[]): IncomeStatementDto;
 
   generateTrialBalance(entries: GeneralLedgerDocument[]): TrialBalanceDto;
+  countGeneralLedgerEntries(): Promise<number>;
 }

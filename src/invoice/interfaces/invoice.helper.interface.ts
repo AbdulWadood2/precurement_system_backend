@@ -35,4 +35,6 @@ export interface IInvoiceHelper {
   recordPayment(id: string, dto: PaymentInvoiceDto): Promise<Invoice | null>;
   delete(id: string): Promise<void>;
   search(query: string, filters?: InvoiceFiltersDto): Promise<Invoice[]>;
+  countInvoices(): Promise<number>;
+  getRecentInvoices(limit: number): Promise<Invoice[]>;
 }

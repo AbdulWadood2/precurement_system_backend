@@ -231,4 +231,17 @@ export class PurchaseOrderHelper implements IPurchaseOrderHelper {
 
     return this.purchaseOrderModel.find(searchQuery).exec();
   }
+
+  async countPurchaseOrders(): Promise<number> {
+    return await this.purchaseOrderModel.countDocuments();
+  }
+
+  async getRecentPurchaseOrders(limit: number): Promise<PurchaseOrder[]> {
+    return await this.purchaseOrderModel
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate('vendor_id', 'company')
+      .exec();
+  }
 }

@@ -20,6 +20,9 @@ import { AuthModule } from 'src/auth/auth.module';
     { provide: 'IReceivingService', useClass: ReceivingService },
   ],
   controllers: [ReceivingController],
-  exports: [{ provide: 'IReceivingService', useClass: ReceivingService }],
+  exports: [
+    { provide: 'IReceivingHelper', useClass: ReceivingHelper },
+    { provide: 'IReceivingService', useClass: ReceivingService },
+  ],
 })
 export class ReceivingModule {}

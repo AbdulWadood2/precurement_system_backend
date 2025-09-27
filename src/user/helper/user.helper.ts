@@ -322,4 +322,21 @@ export class UserHelper implements IUserHelper {
       excludeExtraneousValues: true,
     });
   }
+
+  async countUsers(): Promise<number> {
+    return await this.userModel.countDocuments();
+  }
+
+  async countActiveUsers(): Promise<number> {
+    return await this.userModel.countDocuments({ isActive: true });
+  }
+
+  async countUsersByDateRange(startDate: Date, endDate: Date): Promise<number> {
+    return await this.userModel.countDocuments({
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+  }
 }

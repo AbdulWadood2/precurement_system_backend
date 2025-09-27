@@ -32,4 +32,6 @@ export interface IPurchaseOrderHelper {
     query: string,
     filters?: PurchaseOrderFiltersDto,
   ): Promise<PurchaseOrder[]>;
+  countPurchaseOrders(): Promise<number>;
+  getRecentPurchaseOrders(limit: number): Promise<PurchaseOrder[]>;
 }

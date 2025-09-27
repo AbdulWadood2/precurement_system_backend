@@ -24,4 +24,5 @@ export interface IReceivingHelper {
   update(id: string, dto: UpdateReceivingDto): Promise<Receiving | null>;
   delete(id: string): Promise<void>;
   search(query: string, filters?: ReceivingFiltersDto): Promise<Receiving[]>;
+  countReceivingRecords(): Promise<number>;
 }

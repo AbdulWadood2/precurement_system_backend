@@ -199,11 +199,15 @@ export class GeneralLedgerHelper implements IGeneralLedgerHelper {
   }
 
   generateBalanceSheet(entries: GeneralLedgerDocument[]): BalanceSheetDto {
-    const assets = entries.filter((entry) => (entry as any).accountType === 'Asset');
+    const assets = entries.filter(
+      (entry) => (entry as any).accountType === 'Asset',
+    );
     const liabilities = entries.filter(
       (entry) => (entry as any).accountType === 'Liability',
     );
-    const equity = entries.filter((entry) => (entry as any).accountType === 'Equity');
+    const equity = entries.filter(
+      (entry) => (entry as any).accountType === 'Equity',
+    );
 
     const assetsBalances = this.calculateAccountBalances(assets);
     const liabilitiesBalances = this.calculateAccountBalances(liabilities);
@@ -214,7 +218,10 @@ export class GeneralLedgerHelper implements IGeneralLedgerHelper {
       liabilities: liabilitiesBalances,
       equity: equityBalances,
       totalAssets: assetsBalances.reduce((sum, item) => sum + item.balance, 0),
-      totalLiabilities: liabilitiesBalances.reduce((sum, item) => sum + item.balance, 0),
+      totalLiabilities: liabilitiesBalances.reduce(
+        (sum, item) => sum + item.balance,
+        0,
+      ),
       totalEquity: equityBalances.reduce((sum, item) => sum + item.balance, 0),
     };
   }
@@ -222,8 +229,12 @@ export class GeneralLedgerHelper implements IGeneralLedgerHelper {
   generateIncomeStatement(
     entries: GeneralLedgerDocument[],
   ): IncomeStatementDto {
-    const revenue = entries.filter((entry) => (entry as any).accountType === 'Revenue');
-    const expenses = entries.filter((entry) => (entry as any).accountType === 'Expense');
+    const revenue = entries.filter(
+      (entry) => (entry as any).accountType === 'Revenue',
+    );
+    const expenses = entries.filter(
+      (entry) => (entry as any).accountType === 'Expense',
+    );
 
     const revenueBalances = this.calculateAccountBalances(revenue);
     const expensesBalances = this.calculateAccountBalances(expenses);
@@ -231,9 +242,17 @@ export class GeneralLedgerHelper implements IGeneralLedgerHelper {
     return {
       revenue: revenueBalances,
       expenses: expensesBalances,
-      totalRevenue: revenueBalances.reduce((sum, item) => sum + item.balance, 0),
-      totalExpenses: expensesBalances.reduce((sum, item) => sum + item.balance, 0),
-      netIncome: revenueBalances.reduce((sum, item) => sum + item.balance, 0) - expensesBalances.reduce((sum, item) => sum + item.balance, 0),
+      totalRevenue: revenueBalances.reduce(
+        (sum, item) => sum + item.balance,
+        0,
+      ),
+      totalExpenses: expensesBalances.reduce(
+        (sum, item) => sum + item.balance,
+        0,
+      ),
+      netIncome:
+        revenueBalances.reduce((sum, item) => sum + item.balance, 0) -
+        expensesBalances.reduce((sum, item) => sum + item.balance, 0),
     };
   }
 
@@ -249,7 +268,17 @@ export class GeneralLedgerHelper implements IGeneralLedgerHelper {
         (sum, account) => sum + account.creditBalance,
         0,
       ),
-      isBalanced: Math.abs(accountBalances.reduce((sum, account) => sum + account.debitBalance, 0) - accountBalances.reduce((sum, account) => sum + account.creditBalance, 0)) < 0.01,
+      isBalanced:
+        Math.abs(
+          accountBalances.reduce(
+            (sum, account) => sum + account.debitBalance,
+            0,
+          ) -
+            accountBalances.reduce(
+              (sum, account) => sum + account.creditBalance,
+              0,
+            ),
+        ) < 0.01,
     };
   }
 
@@ -276,5 +305,9 @@ export class GeneralLedgerHelper implements IGeneralLedgerHelper {
     });
 
     return Array.from(accountMap.values());
+  }
+
+  async countGeneralLedgerEntries(): Promise<number> {
+    return await this.generalLedgerModel.countDocuments();
   }
 }

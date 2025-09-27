@@ -35,9 +35,8 @@ export class PaymentVoucherHelper implements IPaymentVoucherHelper {
     }
 
     const pvNumber = this.generatePvNumber();
-    const { totalAdvanceTaxesAndCharges, totalPaidAmount } = this.calculateTotals(
-      createPaymentVoucherDto.advanceTaxesAndCharges,
-    );
+    const { totalAdvanceTaxesAndCharges, totalPaidAmount } =
+      this.calculateTotals(createPaymentVoucherDto.advanceTaxesAndCharges);
 
     const paymentVoucher = new this.paymentVoucherModel({
       ...createPaymentVoucherDto,
@@ -202,5 +201,9 @@ export class PaymentVoucherHelper implements IPaymentVoucherHelper {
       totalPaidAmount: grandTotal,
       netAmount: grandTotal,
     };
+  }
+
+  async countPaymentVouchers(): Promise<number> {
+    return await this.paymentVoucherModel.countDocuments();
   }
 }

@@ -37,4 +37,5 @@ export interface IPaymentVoucherHelper {
   validatePaymentVoucher(paymentVoucher: CreatePaymentVoucherDto): boolean;
 
   calculateTotals(advanceTaxesAndCharges: any[]): PaymentTotalsDto;
+  countPaymentVouchers(): Promise<number>;
 }

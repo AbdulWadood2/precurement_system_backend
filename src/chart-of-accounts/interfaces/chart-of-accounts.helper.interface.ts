@@ -43,4 +43,5 @@ export interface IChartOfAccountsHelper {
   ): AccountHierarchyDto[];
 
   generateAccountNumber(accountType: string, parentAccount?: string): string;
+  countChartOfAccounts(): Promise<number>;
 }

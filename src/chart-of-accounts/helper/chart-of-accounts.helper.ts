@@ -227,4 +227,8 @@ export class ChartOfAccountsHelper implements IChartOfAccountsHelper {
     const timestamp = Date.now().toString().slice(-6);
     return `${prefix}${timestamp}`;
   }
+
+  async countChartOfAccounts(): Promise<number> {
+    return await this.chartOfAccountsModel.countDocuments();
+  }
 }

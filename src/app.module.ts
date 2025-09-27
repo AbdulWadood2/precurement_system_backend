@@ -12,6 +12,7 @@ import { PaymentVoucherModule } from './payment-voucher/payment-voucher.module';
 import { GeneralLedgerModule } from './general-ledger/general-ledger.module';
 import { ChartOfAccountsModule } from './chart-of-accounts/chart-of-accounts.module';
 import { JournalEntryModule } from './journal-entry/journal-entry.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { JournalEntryModule } from './journal-entry/journal-entry.module';
     GeneralLedgerModule,
     ChartOfAccountsModule,
     JournalEntryModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}

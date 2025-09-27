@@ -37,4 +37,8 @@ export interface IPurchaseRequestHelper {
     query: string,
     filters?: PurchaseRequestFiltersDto,
   ): Promise<PurchaseRequest[]>;
+  countPurchaseRequests(): Promise<number>;
+  countPendingApprovals(): Promise<number>;
+  getRecentPurchaseRequests(limit: number): Promise<PurchaseRequest[]>;
+  getApprovalRateByAuthCount(): Promise<Record<string, { approved: number; declined: number; pending: number }>>;
 }

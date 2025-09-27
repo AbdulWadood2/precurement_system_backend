@@ -25,6 +25,7 @@ import { AuthModule } from 'src/auth/auth.module';
   controllers: [PurchaseRequestController],
   exports: [
     { provide: 'IPurchaseRequestService', useClass: PurchaseRequestService },
+    { provide: 'IPurchaseRequestHelper', useClass: PurchaseRequestHelper },
   ],
 })
 export class PurchaseRequestModule {}

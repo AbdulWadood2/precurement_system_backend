@@ -222,4 +222,8 @@ export class JournalEntryHelper implements IJournalEntryHelper {
   validateDebitCreditBalance(totalDebit: number, totalCredit: number): boolean {
     return Math.abs(totalDebit - totalCredit) < 0.01;
   }
+
+  async countJournalEntries(): Promise<number> {
+    return await this.journalEntryModel.countDocuments();
+  }
 }

@@ -156,4 +156,106 @@ export class PurchaseRequestHelper implements IPurchaseRequestHelper {
 
     return this.purchaseRequestModel.find(searchQuery).exec();
   }
+
+  async countPurchaseRequests(): Promise<number> {
+    return await this.purchaseRequestModel.countDocuments();
+  }
+
+  async countPendingApprovals(): Promise<number> {
+    return await this.purchaseRequestModel.countDocuments({
+      status: 'pending',
+    });
+  }
+
+  async getRecentPurchaseRequests(limit: number): Promise<PurchaseRequest[]> {
+    return await this.purchaseRequestModel
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate('requested_by_user_id', 'display_name')
+      .exec();
+  }
+
+  async getApprovalRateByAuthCount(): Promise<Record<string, { approved: number; declined: number; pending: number }>> {
+    try {
+      // Get approval rate data grouped by authorization count
+      const pipeline = [
+        {
+          $group: {
+            _id: '$authorization_count',
+            approved: {
+              $sum: {
+                $cond: [{ $eq: ['$status', 'approved'] }, 1, 0]
+              }
+            },
+            declined: {
+              $sum: {
+                $cond: [{ $eq: ['$status', 'declined'] }, 1, 0]
+              }
+            },
+            pending: {
+              $sum: {
+                $cond: [{ $eq: ['$status', 'pending'] }, 1, 0]
+              }
+            }
+          }
+        },
+        {
+          $sort: { _id: 1 as 1 }
+        }
+      ];
+
+      const results = await this.purchaseRequestModel.aggregate(pipeline).exec();
+      
+      const approvalData: Record<string, { approved: number; declined: number; pending: number }> = {};
+      
+      results.forEach(result => {
+        const authCount = result._id?.toString() || '0';
+        approvalData[authCount] = {
+          approved: result.approved || 0,
+          declined: result.declined || 0,
+          pending: result.pending || 0
+        };
+      });
+
+      // Ensure we have data for common authorization counts
+      const defaultData = { approved: 0, declined: 0, pending: 0 };
+      for (let i = 1; i <= 5; i++) {
+        if (!approvalData[i.toString()]) {
+          approvalData[i.toString()] = { ...defaultData };
+        }
+      }
+
+      // Group 5+ together
+      const fivePlus = { approved: 0, declined: 0, pending: 0 };
+      Object.keys(approvalData).forEach(key => {
+        const num = parseInt(key);
+        if (num >= 5) {
+          fivePlus.approved += approvalData[key].approved;
+          fivePlus.declined += approvalData[key].declined;
+          fivePlus.pending += approvalData[key].pending;
+        }
+      });
+
+      // Remove individual 5+ entries and add combined
+      Object.keys(approvalData).forEach(key => {
+        const num = parseInt(key);
+        if (num >= 5) {
+          delete approvalData[key];
+        }
+      });
+      approvalData['5+'] = fivePlus;
+
+      return approvalData;
+    } catch (error) {
+      // Return default data if aggregation fails
+      return {
+        '1': { approved: 0, declined: 0, pending: 0 },
+        '2': { approved: 0, declined: 0, pending: 0 },
+        '3': { approved: 0, declined: 0, pending: 0 },
+        '4': { approved: 0, declined: 0, pending: 0 },
+        '5+': { approved: 0, declined: 0, pending: 0 },
+      };
+    }
+  }
 }
